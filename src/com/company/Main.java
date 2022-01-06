@@ -14,258 +14,21 @@ class Main  implements ActionListener{
     private static JFrame frame;
     private static JPanel panel;
     private static JLabel currName;
-    private static JLabel currId;
-    private static JTextField userName,currMessageField, currIdField, currNameField, currAddressField, currPhoneNumberField,currPriceField,currLocationField,currQuantityField;
+    private static JTextField userName,currMessageField, currNameField, currAddressField, currPhoneNumberField;
     private static JPasswordField password;
     private static JButton executeOption;
     private static JRadioButton addRadio , updateRadio , deleteRadio;
-    private static String currAddressValue,currLocationValue, currPhoneNumberValue,currNameValue,currMessageValue;
-    private static Integer currPriceValue,currIdValue,currQuantityValue;
-    private static final Color black = new Color(0,0,0),white = new Color(255,255,255),green = new Color(132, 224, 158);
+    private static String currAddressValue, currPhoneNumberValue,currNameValue,currMessageValue;
+    private static final Color black = new Color(245,40,145),white = new Color(255,255,255),green = new Color(0, 0, 0);
+    public static ArrayList<String> complaintId,complaintList,complaintsPhnoList,complaintsEmailList;
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
     }
 
-    public static class Customer {
-
-        String connectionName,connectionPassword;
-
-        Customer(String connectionName,String connectionPassword){
-            this.connectionName = connectionName;
-            this.connectionPassword = connectionPassword;
-        }
-        private void insert(int id, String name, String address, String phoneNumber) throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String insert = "INSERT INTO "+ "customer" +" VALUES("+id+",'"+name+"','"+address+"','"+phoneNumber+"')";
-            stmt.execute(insert);
-            con.close();
-            System.out.println("Successfully Inserted customer data with id:"+id);
-        }
-        private void update(int id, String name, String address, String phoneNumber) throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String update = "UPDATE "+ "customer" +" SET NAME='"+name+"' ,address='"+address+"' ,phoneno='"+phoneNumber+"' WHERE idcustomer="+id;
-            stmt.execute(update);
-            con.close();
-            System.out.println("Successfully Updated customer data with id:"+id);
-        }
-        private void delete(int id) throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String delete = "DELETE FROM "+ "customer" +" WHERE idcustomer="+id;
-            stmt.execute(delete);
-            con.close();
-            System.out.println("Successfully Deleted customer data with id:"+id);
-        }
-        private void display() throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String display = "SELECT * FROM "+ "customer";
-            ResultSet res = stmt.executeQuery(display);
-
-            while(res.next()){
-                int idcustomer = res.getInt("idcustomer");
-                String name = res.getString("name");
-                String address = res.getString("address");
-                String phoneno = res.getString("phoneno");
-
-                System.out.println(idcustomer+"\t"+name+"\t"+address+"\t"+phoneno);
-            }
-            con.close();
-            System.out.println("Data of all customers retrieved Successful...");
-        }
-    }
-
-    public static class Order {
-
-        String connectionName, connectionPassword;
-        Random random = new Random();
-        int randomOrderID = random.nextInt(1000);
-
-        Order(String connectionName,String connectionPassword){
-            this.connectionName = connectionName;
-            this.connectionPassword = connectionPassword;
-        }
-        private void place(int quantity,String item) throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String insert = "INSERT INTO stock.order VALUES("+randomOrderID+","+quantity+","+"'"+item+"')";
-            stmt.execute(insert);
-            con.close();
-            System.out.println("Order placed Successfully with order id:"+randomOrderID+"...");
-        }
-        private void cancel(int orderid) throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String insert = "DELETE FROM stock.order WHERE orderid="+orderid;
-            stmt.execute(insert);
-            con.close();
-            System.out.println("Order cancelled Successfully with order id:"+orderid+"...");
-        }
-        private void display() throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String display = "SELECT * FROM stock.order";
-            ResultSet res = stmt.executeQuery(display);
-
-            while(res.next()){
-                int orderid = res.getInt("orderid");
-                int quantity = res.getInt("quantity");
-                String item = res.getString("item");
-
-                System.out.println(orderid+"\t"+quantity+"\t"+item);
-            }
-            con.close();
-            System.out.println("Data of all orders retrieved Successful...");
-        }
-    }
-
-    public static class Product{
-
-        String connectionName,connectionPassword;
-
-        Product(String connectionName,String connectionPassword){
-            this.connectionName = connectionName;
-            this.connectionPassword = connectionPassword;
-        }
-        private void add(int id,String productName,int price,String location) throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String insert = "INSERT INTO PRODUCT VALUES("+id+",'"+productName+"',"+price+",'"+location+"')";
-            stmt.execute(insert);
-            con.close();
-            System.out.println("Successfully Inserted product data with id:"+id);
-        }
-        private void update(int id,String productName,int price,String location) throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String update = "UPDATE PRODUCT SET PRODUCTNAME='"+productName+"' ,price="+price+" ,location='"+location+"' WHERE productid="+id;
-            stmt.execute(update);
-            con.close();
-            System.out.println("Successfully Updated product data with id:"+id);
-        }
-        private void delete(int id) throws SQLException {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stock", connectionName, connectionPassword);
-            Statement stmt = con.createStatement();
-            String update = "DELETE FROM PRODUCT WHERE PRODUCTID="+id;
-            stmt.execute(update);
-            con.close();
-            System.out.println("Successfully Deleted product data with id:"+id);
-        }
-    }
-
-    public static void orderProduct(String userName){
-
-        frame.remove(panel);
-        frame.setSize(650,350);
-
-        JPanel orderPanel = new JPanel();
-        orderPanel.setLayout(null);
-        orderPanel.setBackground(black);
-
-        JLabel welcomeUser = new JLabel("Welcome " + userName);
-        welcomeUser.setBounds(10,20,180,25);
-        welcomeUser.setForeground(white);
-        orderPanel.add(welcomeUser);
-
-        JRadioButton placeRadio = new JRadioButton("Place Order !");
-        placeRadio.setBounds(10,50,100,30);
-        placeRadio.setBackground(black);
-        placeRadio.setForeground(white);
-        placeRadio.setFocusPainted(false);
-
-        JRadioButton cancelRadio = new JRadioButton("Cancel an order of a product !");
-        cancelRadio.setBounds(10,80,200,30);
-        cancelRadio.setBackground(black);
-        cancelRadio.setForeground(white);
-        cancelRadio.setFocusPainted(false);
-
-        JRadioButton displayRadio=new JRadioButton("Display the orders made");
-        displayRadio.setBounds(10,110,200,30);
-        displayRadio.setBackground(black);
-        displayRadio.setForeground(white);
-        displayRadio.setFocusPainted(false);
-
-        currId = new JLabel("Enter Id");
-        currId.setBounds(235,50,150,30);
-        currId.setForeground(white);
-
-        currIdField = new JTextField(100);
-        currIdField.setBounds(450,50,150,30);
-        orderPanel.add(currIdField);
-
-        currName = new JLabel("Enter Product/Item name");
-        currName.setBounds(235,80,250,30);
-        currName.setForeground(white);
-
-        currNameField = new JTextField(100);
-        currNameField.setBounds(450,80,150,30);
-        orderPanel.add(currNameField);
-
-        JLabel currQuantity = new JLabel("Enter quantity you want to order");
-        currQuantity.setBounds(235,110,200,30);
-        currQuantity.setForeground(white);
-
-        currQuantityField = new JTextField(100);
-        currQuantityField.setBounds(450,110,150,30);
-        orderPanel.add(currQuantityField);
-
-        ButtonGroup bg=new ButtonGroup();
-        bg.add(placeRadio);
-        bg.add(cancelRadio);
-        bg.add(displayRadio);
-
-        executeOption=new JButton("Execute !");
-        executeOption.setBounds(230,250,180,30);
-        executeOption.setBackground(green);
-        executeOption.setForeground(black);
-        executeOption.setFocusPainted(false);
-        executeOption.addActionListener(e -> {
-
-            currIdValue = Integer.valueOf(currIdField.getText());
-            currNameValue = currNameField.getText();
-            currQuantityValue = Integer.valueOf(currQuantityField.getText());
-
-            Order order = new Order(connectionName,connectionPassword);
-            if(placeRadio.isSelected()){
-                try {
-                    order.place(currQuantityValue,currNameValue);
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-                System.out.println("User Data Added! "+currIdValue+" , "+currNameValue+" , "+currQuantityValue);
-            }else if(cancelRadio.isSelected()){
-                try {
-                    order.cancel(currIdValue);
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-                System.out.println("User Data Updated! "+currIdValue+" , "+currNameValue+" , "+currQuantityValue);
-            }else if(displayRadio.isSelected()){
-                try {
-                    order.display();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        orderPanel.add(currId);
-        orderPanel.add(currName);
-        orderPanel.add(currQuantity);
-
-        orderPanel.add(placeRadio);
-        orderPanel.add(cancelRadio);
-        orderPanel.add(displayRadio);
-        orderPanel.add(executeOption);
-
-        frame.add(orderPanel);
-        frame.setVisible(true);
-    }
     private static void customerLogin(String username){
+
         frame.remove(panel);
 
         JPanel userPanel = new JPanel();
@@ -344,29 +107,14 @@ class Main  implements ActionListener{
             currPhoneNumberValue = currPhoneNumberField.getText();
             currMessageValue = currMessageField.getText();
 
-            Customer customer = new Customer(connectionName,connectionPassword);
-
             if(addRadio.isSelected()){
-//                try {
-//                    customer.insert(currIdValue,currNameValue,currAddressValue, currPhoneNumberValue);
-//                } catch (SQLException ex) {
-//                    ex.printStackTrace();
-//                }
                 System.out.println("User Data Added! "+currMessageValue+" , "+currNameValue+" , "+currAddressValue+" , "+ currPhoneNumberValue);
             }else if(updateRadio.isSelected()){
-//                try {
-//                    customer.update(currIdValue,currNameValue,currAddressValue, currPhoneNumberValue);
-//                } catch (SQLException ex) {
-//                    ex.printStackTrace();
-//                }
+
                 System.out.println("User Data Updated! "+currMessageValue+" , "+currNameValue+" , "+currAddressValue+" , "+ currPhoneNumberValue);
             }else if(deleteRadio.isSelected()){
-//                try {
-//                    customer.delete(currIdValue);
-//                } catch (SQLException ex) {
-//                    ex.printStackTrace();
-//                }
-                System.out.println("User Data Deleted! "+currMessageValue+" , "+currNameValue+" , "+currAddressValue+" , "+ currPhoneNumberValue);
+
+               System.out.println("User Data Deleted! "+currMessageValue+" , "+currNameValue+" , "+currAddressValue+" , "+ currPhoneNumberValue);
             }
         });
 
@@ -385,10 +133,51 @@ class Main  implements ActionListener{
         frame.setVisible(true);
     }
 
-    private static void adminLogin(){
+    private static void getComplaints(ArrayList id,ArrayList phno,ArrayList mail,ArrayList complaint) throws SQLException {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bpo", connectionName, connectionPassword);
+        Statement stmt = con.createStatement();
+        String display = "SELECT * FROM "+ "bpo where status = 'new' ;";
+        ResultSet res = stmt.executeQuery(display);
+
+        while(res.next()){
+            String currId = res.getString("id");
+            String currPhno = res.getString("phno");
+            String currEmail = res.getString("email");
+            String currComplaint = res.getString("complaint");
+            String currStatus = res.getString("status");
+
+            System.out.println(currId+"\t"+currPhno+"\t"+currEmail+"\t"+currComplaint+"\t"+currStatus);
+            id.add(currId);
+            phno.add(currPhno);
+            mail.add(currEmail);
+            complaint.add(currComplaint);
+            id.add(currId);
+        }
+        con.close();
+    }
+
+    private static void markResolve(String id) throws SQLException {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bpo", connectionName, connectionPassword);
+        Statement stmt = con.createStatement();
+        String update = "UPDATE bpo SET status = 'resolved' WHERE id="+id+";";
+        stmt.execute(update);
+        con.close();
+        System.out.println("Successfully resolved id:"+id);
+    }
+
+    private static void markSpam(String id) throws SQLException {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bpo", connectionName, connectionPassword);
+        Statement stmt = con.createStatement();
+        String update = "UPDATE bpo SET status = 'spam' WHERE id="+id+";";
+        stmt.execute(update);
+        con.close();
+        System.out.println("Successfully resolved id:"+id);
+    }
+
+    private static void adminLogin() throws SQLException {
 
         frame.remove(panel);
-        frame.setSize(800,500);
+        frame.setSize(1000,700);
 
         JPanel adminPanel = new JPanel();
         adminPanel.setLayout(null);
@@ -404,22 +193,17 @@ class Main  implements ActionListener{
         complainTitle.setForeground(white);
         adminPanel.add(complainTitle);
 
-        ArrayList<String> complaintsPhnoList = new ArrayList<>();
-        complaintsPhnoList.add("9176969473");
-        complaintsPhnoList.add("9276969473");
-        complaintsPhnoList.add("9136969473");
-        complaintsPhnoList.add("9174969473");
-        complaintsPhnoList.add("9176569473");
+        complaintId = new ArrayList<>();
+        complaintsPhnoList = new ArrayList<>();
+        complaintsEmailList = new ArrayList<>();
+        complaintList = new ArrayList<>();
 
-        ArrayList<String> complaintsEmailList = new ArrayList<>();
-        complaintsEmailList.add("hareeshprogrammera@gmail.com");
-        complaintsEmailList.add("hareeshprogrammerb@gmail.com");
-        complaintsEmailList.add("hareeshprogrammerc@gmail.com");
-        complaintsEmailList.add("hareeshprogrammerd@gmail.com");
-        complaintsEmailList.add("hareeshprogrammere@gmail.com");
+        getComplaints(complaintId,complaintsPhnoList,complaintsEmailList,complaintList);
 
-        int counter = 20;
+        int counter = 50;
         for(int i=0;i<complaintsPhnoList.size();i++){
+
+            String id = complaintId.get(i);
 
             JLabel phoneNumber = new JLabel("Phone Number : ");
             phoneNumber.setBounds(10,60+counter,100,25);
@@ -432,18 +216,69 @@ class Main  implements ActionListener{
             adminPanel.add(currPhoneNumber);
 
             JLabel email = new JLabel("Email ID : ");
-            email.setBounds(180,60+counter,100,25);
+            email.setBounds(10,90+counter,100,25);
             email.setForeground(white);
             adminPanel.add(email);
 
             JLabel currEmail = new JLabel(complaintsEmailList.get(i));
-            currEmail.setBounds(240,60+counter,250,25);
+            currEmail.setBounds(80,90+counter,250,25);
             currEmail.setForeground(white);
             adminPanel.add(currEmail);
-            counter+=20;
+
+            JLabel complain = new JLabel("Complain : ");
+            complain.setBounds(10,120+counter,100,25);
+            complain.setForeground(white);
+            adminPanel.add(complain);
+
+            JLabel currComplain = new JLabel(complaintList.get(i));
+            currComplain.setBounds(80,120+counter,250,25);
+            currComplain.setForeground(white);
+            adminPanel.add(currComplain);
+
+            JRadioButton resolveRadio = new JRadioButton("Resolved");
+            resolveRadio.setBounds(500,60+counter,100,25);
+            resolveRadio.setBackground(black);
+            resolveRadio.setForeground(white);
+            resolveRadio.setFocusPainted(false);
+
+            JRadioButton spamRadio = new JRadioButton("Spam");
+            spamRadio.setBounds(500,90+counter,100,25);
+            spamRadio.setBackground(black);
+            spamRadio.setForeground(white);
+            spamRadio.setFocusPainted(false);
+
+            JButton resolve=new JButton("Execute");
+            resolve.setBounds(500,120+counter,100,25);
+            resolve.setBackground(green);
+            resolve.setForeground(black);
+            resolve.setFocusPainted(false);
+            resolve.addActionListener( e -> {
+
+                if(resolveRadio.isSelected()){
+                    try {
+                        markResolve(id);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                }else if(spamRadio.isSelected()){
+                    try {
+                        markSpam(id);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+
+            ButtonGroup bg=new ButtonGroup();
+            bg.add(resolveRadio);
+            bg.add(spamRadio);
+
+            adminPanel.add(resolveRadio);
+            adminPanel.add(spamRadio);
+            adminPanel.add(resolve);
+
+            counter+=130;
         }
-
-
 
         frame.add(adminPanel);
         frame.setVisible(true);
@@ -490,7 +325,11 @@ class Main  implements ActionListener{
             String passwordText = String.valueOf(password.getPassword());
             if (usernameText.equals("admin") && passwordText.equals("admin")) {
                 System.out.println("Admin Logged in!");
-                adminLogin();
+                try {
+                    adminLogin();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
 
             } else {
                 System.out.println("User Logged in!");
