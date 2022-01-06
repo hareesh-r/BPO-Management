@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
+
 class Main  implements ActionListener{
     private static final String connectionName = "root";
     private static final String connectionPassword = "password";
@@ -26,8 +27,26 @@ class Main  implements ActionListener{
     public void actionPerformed(ActionEvent e) {
 
     }
+    private static boolean isResolved(String currPhoneNumberValue) throws SQLException {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bpo", connectionName, connectionPassword);
+        Statement stmt = con.createStatement();
+        String display = "SELECT * FROM bpo where phno = '"+currPhoneNumberValue+"' ;";
+        ResultSet res = stmt.executeQuery(display);
 
-    private static void customerLogin(String username){
+        while(res.next()){
+            String currStatus = res.getString("status");
+            System.out.println(currStatus);
+            if(currStatus.equals("new")){
+                con.close();
+                return false;
+            }else{
+                con.close();
+                return true;
+            }
+        }
+        return false;
+    }
+    private static void customerLogin(String username) throws SQLException {
 
         frame.remove(panel);
 
@@ -108,10 +127,42 @@ class Main  implements ActionListener{
             currMessageValue = currMessageField.getText();
 
             if(addRadio.isSelected()){
-                System.out.println("User Data Added! "+currMessageValue+" , "+currNameValue+" , "+currAddressValue+" , "+ currPhoneNumberValue);
-            }else if(updateRadio.isSelected()){
+                int randId = 0 + (int)(Math.random() * ((4000 - 0) + 1));
+                Connection con = null;
+                try {
+                    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bpo", connectionName, connectionPassword);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                Statement stmt = null;
+                try {
+                    stmt = con.createStatement();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                String update = "INSERT INTO bpo VALUES('"+Integer.toString(randId)+"','"+currPhoneNumberValue+"','"+currAddressValue+"','"+currMessageValue+"','new');";
+                try {
+                    stmt.execute(update);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    con.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
 
-                System.out.println("User Data Updated! "+currMessageValue+" , "+currNameValue+" , "+currAddressValue+" , "+ currPhoneNumberValue);
+                System.out.println("User Complaint Added! "+currMessageValue+" , "+currNameValue+" , "+currAddressValue+" , "+ currPhoneNumberValue);
+            }else if(updateRadio.isSelected()){
+                try {
+                    if(isResolved(currPhoneNumberValue)){
+                        System.out.println("Resolved");
+                    }else{
+                        System.out.println("Pending");
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }else if(deleteRadio.isSelected()){
 
                System.out.println("User Data Deleted! "+currMessageValue+" , "+currNameValue+" , "+currAddressValue+" , "+ currPhoneNumberValue);
@@ -333,7 +384,11 @@ class Main  implements ActionListener{
 
             } else {
                 System.out.println("User Logged in!");
-                customerLogin(usernameText);
+                try {
+                    customerLogin(usernameText);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
 
         });
