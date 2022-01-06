@@ -5,9 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Random;
-
-
 
 class Main  implements ActionListener{
     private static final String connectionName = "root";
